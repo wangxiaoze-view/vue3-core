@@ -220,6 +220,7 @@ export function createAppContext(): AppContext {
     components: {},
     directives: {},
     provides: Object.create(null),
+    // 使用WeakMap的好处就是，key可以作为任意值
     optionsCache: new WeakMap(),
     propsCache: new WeakMap(),
     emitsCache: new WeakMap(),
@@ -233,26 +234,31 @@ export type CreateAppFunction<HostElement> = (
 
 let uid = 0
 
+// TODO: createAppApi ---> mount, unmount等等
 export function createAppAPI<HostElement>(
   render: RootRenderFunction<HostElement>,
   hydrate?: RootHydrateFunction,
 ): CreateAppFunction<HostElement> {
   return function createApp(rootComponent, rootProps = null) {
+    // 初始化 根结点组件和 props
     if (!isFunction(rootComponent)) {
       rootComponent = extend({}, rootComponent)
     }
-
     if (rootProps != null && !isObject(rootProps)) {
       __DEV__ && warn(`root props passed to app.mount() must be an object.`)
       rootProps = null
     }
 
+    // 初始化context， 这里的是全局的
     const context = createAppContext()
+    // 下载的插件系统
     const installedPlugins = new WeakSet()
     const pluginCleanupFns: Array<() => any> = []
 
+    // 是否加载过
     let isMounted = false
 
+    // 将context中app重新定义
     const app: App = (context.app = {
       _uid: uid++,
       _component: rootComponent as ConcreteComponent,
@@ -275,6 +281,7 @@ export function createAppAPI<HostElement>(
         }
       },
 
+      // TODO: app.use源码
       use(plugin: Plugin, ...options: any[]) {
         if (installedPlugins.has(plugin)) {
           __DEV__ && warn(`Plugin has already been applied to target app.`)
@@ -293,6 +300,7 @@ export function createAppAPI<HostElement>(
         return app
       },
 
+      // TODO: mixin
       mixin(mixin: ComponentOptions) {
         if (__FEATURE_OPTIONS_API__) {
           if (!context.mixins.includes(mixin)) {
@@ -309,6 +317,7 @@ export function createAppAPI<HostElement>(
         return app
       },
 
+      // TODO: component
       component(name: string, component?: Component): any {
         if (__DEV__) {
           validateComponentName(name, context.config)
@@ -323,6 +332,7 @@ export function createAppAPI<HostElement>(
         return app
       },
 
+      // TODO: directive
       directive(name: string, directive?: Directive) {
         if (__DEV__) {
           validateDirectiveName(name)
@@ -338,6 +348,7 @@ export function createAppAPI<HostElement>(
         return app
       },
 
+      // TODO: mount
       mount(
         rootContainer: HostElement,
         isHydrate?: boolean,

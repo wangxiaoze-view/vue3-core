@@ -309,6 +309,7 @@ export const queuePostRenderEffect: (
  * })
  * ```
  */
+// TODO: createApp  render 初始化操作
 export function createRenderer<
   HostNode = RendererNode,
   HostElement = RendererElement,
@@ -338,6 +339,7 @@ function baseCreateRenderer(
 ): HydrationRenderer
 
 // implementation
+// TODO: 这里是初始化的renderer操作，对节点信息做了一些变动
 function baseCreateRenderer(
   options: RendererOptions,
   createHydrationFns?: typeof createHydrationFunctions,
@@ -347,8 +349,11 @@ function baseCreateRenderer(
     initFeatureFlags()
   }
 
+  // target 就是全局的window
   const target = getGlobalThis()
+  // 对vue进行打标
   target.__VUE__ = true
+  // devtools
   if (__DEV__ || __FEATURE_PROD_DEVTOOLS__) {
     setDevtoolsHook(target.__VUE_DEVTOOLS_GLOBAL_HOOK__, target)
   }
@@ -370,6 +375,11 @@ function baseCreateRenderer(
 
   // Note: functions inside this closure should use `const xxx = () => {}`
   // style in order to prevent being inlined by minifiers.
+
+  /**
+   *
+   * ! TODO: 标签： createApp 看到这里
+   */
   const patch: PatchFn = (
     n1,
     n2,
@@ -2391,6 +2401,7 @@ function baseCreateRenderer(
     )
   }
 
+  // TODO: 暴露出的render 和 createApp
   return {
     render,
     hydrate,

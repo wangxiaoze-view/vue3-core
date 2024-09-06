@@ -63,6 +63,7 @@ declare module '@vue/runtime-core' {
   }
 }
 
+// TODO: renderer的配置参数， patchProp：挂载属性style, class等  nodeOps: 节点的操作，删除，添加等等
 const rendererOptions = /*@__PURE__*/ extend({ patchProp }, nodeOps)
 
 // lazy create the renderer - this makes core renderer logic tree-shakable
@@ -95,7 +96,10 @@ export const hydrate = ((...args) => {
   ensureHydrationRenderer().hydrate(...args)
 }) as RootHydrateFunction
 
+// TODO: createApp 入口函数
 export const createApp = ((...args) => {
+  // 创建应用
+  // ensureRenderer ==> render, hydrate, createApp
   const app = ensureRenderer().createApp(...args)
 
   if (__DEV__) {

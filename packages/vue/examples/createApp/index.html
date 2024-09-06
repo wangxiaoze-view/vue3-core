@@ -1,0 +1,34 @@
+<script src="../../dist/vue.global.js"></script>
+
+<div id="app">
+  {{msg}}
+
+  <test-app />
+</div>
+
+<script>
+  const { createApp, ref } = Vue
+
+  const app = createApp(
+    {
+      setup(props, attr) {
+        console.log(props, attr)
+        const msg = ref('message')
+        return { msg }
+      },
+    },
+    {
+      propMessage: 'hello world',
+    },
+  )
+  app.component('test-app', {
+    setup(props, attr) {},
+    props: {
+      propMessage: String,
+    },
+    template: `<div>测试</div>`,
+  })
+  app.mount('#app')
+</script>
+
+<style></style>
